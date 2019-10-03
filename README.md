@@ -39,7 +39,7 @@ class MyController extends Controller{
 ss-datatables uses object properties to define columns and tables used to serve datatables. Below are the properties used by ss-datatables.
 
 * **column** : 
-  > Defines the tables, columns, and table relationships that are used.
+  > Defines the tables, columns, and table relationships that are used. You can write this on your controller class constructor (`__construct`)
   * example:
     * ```php
       $this->column=[ 
@@ -91,9 +91,11 @@ ss-datatables uses object properties to define columns and tables used to serve 
       ];```
 
 3. Create a route for ss-datatables
-  **create a route for ss-datatables**
-  `Route::get('ajax','YourController@list')`
-  **or branching on some route**
+  * **create a route for ss-datatables**
+  ```php
+    Route::get('ajax','YourController@list')
+  ```
+  * **or branching on some route**
   ```php
   ...
   use Kitablog\Traits\Datatables;
