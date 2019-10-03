@@ -1,2 +1,2 @@
 # ss-datatables
-A depency for handle datatables server side's request
+A handler for datatables server side's request

@@ -1,0 +1,19 @@
+{
+	"name": "totop275/ss-datatables",
+	"description": "A handler for datatables server side's request",
+	"type": "library",
+	"license": "GPL-3.0-or-later",
+	"authors": [
+		{
+			"name": "Toto Prasetyo",
+			"email": "totop275@gmail.com"
+		}
+	],
+	"require": {
+		"php": "^5.4 || ^7.0",
+		"illuminate/http": "*"
+	},
+	"psr-4": {
+		"Kitablog\\": "src/"
+	}
+}
