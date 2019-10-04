@@ -33,7 +33,7 @@ trait Datatables{
 		});
 		foreach ($data['order'] as $order) {
 			$colm=$data['columns'][$order['column']]['data'];
-			$query->orderBy($colm,$order['dir']??'ASC');
+			$query->orderBy(DB::raw($colm),$order['dir']??'ASC');
 		}
 		$data['columns']=array_filter($data['columns'],function($var) use ($column){
 			return in_array($var['data'],$column['available']);
