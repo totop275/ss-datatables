@@ -33,7 +33,7 @@ trait Datatables{
 		});
 		foreach ($data['order'] as $order) {
 			$colm=$data['columns'][$order['column']]['data'];
-			$query->orderBy(DB::raw($colm),$order['dir']??'ASC');
+			$query->orderByRaw($colm.' '.($order['dir']??'ASC'));
 		}
 		$data['columns']=array_filter($data['columns'],function($var) use ($column){
 			return in_array($var['data'],$column['available']);
@@ -50,18 +50,18 @@ trait Datatables{
 			$query->leftJoin($table,...$relation);
 		}
 		if($data['search']['value']??false){
-			if($data['search']['regex']??''=='true'){
+			if(($data['search']['regex']??'')=='true'){
 				$query->where(function($query) use ($data,$column){
 					foreach ($column['searchable'] as $col) {
 						$col=$column['alias'][$col]??$col;
-						$query->orWhere($col,'REGEXP',$data['search']['value']);
+						$query->orWhereRaw($col.' REGEXP ?',$data['search']['value']);
 					}
 				});
 			}else{
 				$query->where(function($query) use ($data,$column){
 					foreach ($column['searchable'] as $col) {
 						$col=$column['alias'][$col]??$col;
-						$query->orWhere($col,'like','%'.$data['search']['value'].'%');
+						$query->orWhereRaw($col.' like ?','%'.$data['search']['value'].'%');
 					}
 				});
 			}
@@ -76,7 +76,7 @@ trait Datatables{
 				if(strtolower($columnOperator)=='like'){
 					$columnParameter='%'.$columnParameter.'%';
 				}
-				$query->$where($columnName,$columnOperator,$columnParameter);
+				$query->{$where}.'Raw'($columnName.' '.$columnOperator.' ?',$columnParameter);
 			}
 			$select[]=\DB::raw($columnName.' AS '.$col['data']);
 		}
