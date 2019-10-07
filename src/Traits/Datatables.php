@@ -76,7 +76,7 @@ trait Datatables{
 				if(strtolower($columnOperator)=='like'){
 					$columnParameter='%'.$columnParameter.'%';
 				}
-				$query->{$where}.'Raw'($columnName.' '.$columnOperator.' ?',$columnParameter);
+				$query->{$where.'Raw'}($columnName.' '.$columnOperator.' ?',$columnParameter);
 			}
 			$select[]=\DB::raw($columnName.' AS '.$col['data']);
 		}
