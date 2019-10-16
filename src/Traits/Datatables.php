@@ -4,7 +4,7 @@ namespace Kitablog\Traits;
 use Illuminate\Http\Request;
 
 trait Datatables{
-	public $column,$model,$actionBtn,$shouldSelect;
+	public $column,$model,$actionBtn,$shouldSelect,$moreAction,$moreAction2;
 
 	public function list(Request $request){
 		if(!is_array($this->shouldSelect)){
@@ -91,8 +91,20 @@ trait Datatables{
 		if($data['length']>=0){
 			$query->take($data['length']);
 		}
-
-		$data['data']=$query->get()->toArray();
+		if($this->moreAction){
+			foreach ($this->moreAction as $key => $value) {
+				$query->{$value[0]}($value[1]);
+			}
+		}
+		$query=$query->get();
+		if($this->moreAction2){
+			foreach ($query as $que) {
+				foreach ($this->moreAction2 as $key => $value) {
+					$que->{$value[0]}($value[1]);
+				}
+			}
+		}
+		$data['data']=$query->toArray();
 		if(!empty($request->input('draw'))){
 			if(is_array($this->actionBtn)&&$this->actionBtn){
 				$btn=$this->actionBtn;
