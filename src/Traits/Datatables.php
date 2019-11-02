@@ -2,6 +2,7 @@
 
 namespace Kitablog\Traits;
 use Illuminate\Http\Request;
+use Kitablog\Lib\DatatablesLib;
 
 trait Datatables{
 	public $column,$model,$actionBtn,$shouldSelect,$moreAction,$moreAction2;
@@ -23,8 +24,11 @@ trait Datatables{
 
 		$column=$this->column;
 		$model=$this->model;
-
-		$query=(new $model)->newQuery();
+		if(gettype($model)=='object'){
+			$query=$model;
+		}else{
+			$query=(new $model)->newQuery();
+		}
 		$column['available2']=array_map(function($var) use ($column){
 			return $column['alias'][$var]??$var;
 		}, $column['available']);
@@ -33,7 +37,7 @@ trait Datatables{
 		});
 		foreach ($data['order'] as $order) {
 			$colm=$data['columns'][$order['column']]['data'];
-			$query->orderByRaw($colm.' '.($order['dir']??'ASC'));
+			$query->orderByRaw(DatatablesLib::convertColumnName($colm).' '.($order['dir']??'ASC'));
 		}
 		$data['columns']=array_filter($data['columns'],function($var) use ($column){
 			return in_array($var['data'],$column['available']);
@@ -49,6 +53,7 @@ trait Datatables{
 		foreach ($column['table'] as $table => $relation) {
 			$query->leftJoin($table,...$relation);
 		}
+		$data['recordsTotal']=$query->count();
 		if($data['search']['value']??false){
 			if(($data['search']['regex']??'')=='true'){
 				$query->where(function($query) use ($data,$column){
@@ -78,14 +83,13 @@ trait Datatables{
 				}
 				$query->{$where.'Raw'}($columnName.' '.$columnOperator.' ?',$columnParameter);
 			}
-			$select[]=\DB::raw($columnName.' AS '.$col['data']);
+			$select[]=\DB::raw(DatatablesLib::convertColumnName($columnName).' AS '.'`'.$col['data'].'`');
 		}
 		if($select){
 			$query->select(array_merge($this->shouldSelect,$select));
 		}else{
 			$query->select($this->shouldSelect);
 		}
-		$data['recordsTotal']=(new $model)->newQuery()->count();
 		$data['recordsFiltered']=$query->count();
 		$query->skip($data['start']);
 		if($data['length']>=0){
@@ -93,7 +97,7 @@ trait Datatables{
 		}
 		if($this->moreAction){
 			foreach ($this->moreAction as $key => $value) {
-				$query->{$value[0]}($value[1]);
+				$query->{$value[0]}($value[1],$value[2]??'');
 			}
 		}
 		$query=$query->get();
