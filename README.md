@@ -3,6 +3,7 @@ A handler for datatables server side's request
 
 ## About ss-datatables
 ss-datatables contains php traits which contain a view loader for server side datatables requests. A helper to handle ajax requests from [datatables](https://datatables.net).
+see demo ss-datatables [here](http://ss-datatables.zonaku.com)
 
 ## What ss-datatables do?
 Basically, ss-datatables only add a method named `list` to the controller that is used to respond to datatables ajax request.
