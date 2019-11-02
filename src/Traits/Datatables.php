@@ -59,14 +59,14 @@ trait Datatables{
 				$query->where(function($query) use ($data,$column){
 					foreach ($column['searchable'] as $col) {
 						$col=$column['alias'][$col]??$col;
-						$query->orWhereRaw($col.' REGEXP ?',$data['search']['value']);
+						$query->orWhereRaw(DatatablesLib::convertColumnName($col).' REGEXP ?',$data['search']['value']);
 					}
 				});
 			}else{
 				$query->where(function($query) use ($data,$column){
 					foreach ($column['searchable'] as $col) {
 						$col=$column['alias'][$col]??$col;
-						$query->orWhereRaw($col.' like ?','%'.$data['search']['value'].'%');
+						$query->orWhereRaw(DatatablesLib::convertColumnName($col).' like ?','%'.$data['search']['value'].'%');
 					}
 				});
 			}
@@ -81,7 +81,7 @@ trait Datatables{
 				if(strtolower($columnOperator)=='like'){
 					$columnParameter='%'.$columnParameter.'%';
 				}
-				$query->{$where.'Raw'}($columnName.' '.$columnOperator.' ?',$columnParameter);
+				$query->{$where.'Raw'}(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter);
 			}
 			$select[]=\DB::raw(DatatablesLib::convertColumnName($columnName).' AS '.'`'.$col['data'].'`');
 		}
