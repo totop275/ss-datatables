@@ -76,12 +76,19 @@ trait Datatables{
 		foreach ($data['columns'] as $key => $col) {
 			$columnName=$column['alias'][$col['data']]??$col['data'];
 			if(($col['search']['value']??false)&&$col['search']['value']!='*'){
-				$columnOperator=$col['search']['operator']??'like';
+				$columnOperator=$col['search']['operator']??'=';
 				$columnParameter=$col['search']['value'];
 				if(strtolower($columnOperator)=='like'){
 					$columnParameter='%'.$columnParameter.'%';
 				}
-				$query->{$where.'Raw'}(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter);
+				if($col['search']['accept_null']??false){
+					$query->$where(function ($q2) use ($columnName,$columnOperator,$columnParameter) {
+						$query->whereRaw(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter)
+							->orWhereNull(DatatablesLib::convertColumnName($columnName));
+					});
+				}else{
+					$query->{$where.'Raw'}(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter);
+				}
 			}
 			$select[]=\DB::raw(DatatablesLib::convertColumnName($columnName).' AS '.'`'.$col['data'].'`');
 		}
