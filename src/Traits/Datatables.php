@@ -83,8 +83,8 @@ trait Datatables{
 				}
 				if($col['search']['accept_null']??false){
 					$query->$where(function ($q2) use ($columnName,$columnOperator,$columnParameter) {
-						$query->whereRaw(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter)
-							->orWhereNull(DatatablesLib::convertColumnName($columnName));
+						$q2->whereRaw(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter)
+							->orWhereRaw(DatatablesLib::convertColumnName($columnName).' IS NULL');
 					});
 				}else{
 					$query->{$where.'Raw'}(DatatablesLib::convertColumnName($columnName).' '.$columnOperator.' ?',$columnParameter);
